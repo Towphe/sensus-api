@@ -1,0 +1,6 @@
+# build files
+src/bin/
+src/obj/
+
+# secret files
+**/.env

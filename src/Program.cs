@@ -16,6 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<SensusDbContext>(opts => {
     opts.UseNpgsql(DotNetEnv.Env.GetString("PSQL_KEY"));
 });
+builder.Services.AddScoped<IPollHandler, PollHandler>();    // poll handler
 
 var app = builder.Build();
 

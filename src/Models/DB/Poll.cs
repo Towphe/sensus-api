@@ -14,4 +14,6 @@ public partial class Poll
     public DateTime? CreatedDate { get; set; }
 
     public DateTime ExpiryDate { get; set; }
+
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 }

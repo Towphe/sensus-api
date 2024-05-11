@@ -19,6 +19,10 @@ public partial class SensusDbContext : DbContext
 
     public virtual DbSet<Question> Questions { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseNpgsql("Host=localhost;Database=sensus_db;user id=tope;password=pingu");
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Poll>(entity =>
@@ -49,7 +53,12 @@ public partial class SensusDbContext : DbContext
             entity.Property(e => e.Questionid)
                 .HasDefaultValueSql("gen_random_uuid()")
                 .HasColumnName("questionid");
-            entity.Property(e => e.PollId).HasColumnName("poll_id");
+            entity.Property(e => e.Pollid).HasColumnName("pollid");
+            entity.Property(e => e.Question1).HasColumnName("question");
+
+            entity.HasOne(d => d.Poll).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.Pollid)
+                .HasConstraintName("question_pollid_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -7,5 +7,9 @@ public partial class Question
 {
     public Guid Questionid { get; set; }
 
-    public string PollId { get; set; } = null!;
+    public Guid? Pollid { get; set; }
+
+    public string Question1 { get; set; } = null!;
+
+    public virtual Poll? Poll { get; set; }
 }

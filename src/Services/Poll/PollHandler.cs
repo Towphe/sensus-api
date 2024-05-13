@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SensusAPI.Models.DB;
@@ -54,5 +55,26 @@ public class PollHandler : IPollHandler{
                           }
                          ).FirstOrDefaultAsync();
         return poll;
+    }
+    public async Task<Dictionary<Guid, ImmutableList<String>>> RetrievePollAnswers(Guid pollId){
+        // get list of answers attributed to poll `poll id`
+        var answers = await _dbContext.Answers.Where(a => a.Pollid == pollId).ToListAsync();
+        
+        // get unique set of questions
+        var questionIds = answers.Select(a => a.Questionid).Distinct().ToImmutableList();
+
+        // initialize grouped answers
+        var groupedAnswers = new Dictionary<Guid, ImmutableList<String>>();
+        
+        // group by question id
+        questionIds.ForEach(q => {
+            // create new array per question containing answers to each question
+            var qAnswers = answers.Where(a => a.Questionid == q).Select(a => a.Ans).ToImmutableList();
+            // append grouped result to answers list
+            groupedAnswers.Add(q, qAnswers);
+        });
+        
+        // return result
+        return groupedAnswers;
     }
 }

@@ -1,4 +1,5 @@
 
+using System.Collections.Immutable;
 using SensusAPI.Models.DB;
 using SensusAPI.Models.Poll;
 
@@ -21,5 +22,11 @@ public interface IPollHandler{
     /// <param name="pollId"></param>
     /// <returns></returns>
     public Task<RetrieveBasicPollDto?> RetrieveBasicPoll(Guid pollId);
+    /// <summary>
+    /// Retrieve poll answers
+    /// </summary>
+    /// <param name="pollId"></param>
+    /// <returns></returns>
+    public Task<Dictionary<Guid, ImmutableList<String>>> RetrievePollAnswers(Guid pollId);
 
 }

@@ -54,10 +54,17 @@ public class PollController : ControllerBase{
             };
         }
 
+        // retrieve answers
+        var answers = await _pollHandler.RetrievePollAnswers(pollId);
+
         _logger.LogInformation($"{DateTime.Now}: Retrieved poll {pollId}.");
+        
         return new APIResponse(){
             Detail = "Poll found.",
-            Data = poll
+            Data = new {
+                poll = poll,
+                answers = answers
+            }
         };
     }
 

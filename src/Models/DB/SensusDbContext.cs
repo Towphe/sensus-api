@@ -15,16 +15,41 @@ public partial class SensusDbContext : DbContext
     {
     }
 
+    public virtual DbSet<Answer> Answers { get; set; }
+
     public virtual DbSet<Poll> Polls { get; set; }
 
     public virtual DbSet<Question> Questions { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Database=sensus_db;user id=tope;password=pingu");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Answer>(entity =>
+        {
+            entity.HasKey(e => e.Answerid).HasName("answer_pkey");
+
+            entity.ToTable("answer");
+
+            entity.Property(e => e.Answerid)
+                .HasDefaultValueSql("gen_random_uuid()")
+                .HasColumnName("answerid");
+            entity.Property(e => e.Ans).HasColumnName("ans");
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnName("created_date");
+            entity.Property(e => e.Pollid).HasColumnName("pollid");
+            entity.Property(e => e.Questionid).HasColumnName("questionid");
+
+            entity.HasOne(d => d.Poll).WithMany(p => p.Answers)
+                .HasForeignKey(d => d.Pollid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("answer_pollid_fkey");
+
+            entity.HasOne(d => d.Question).WithMany(p => p.Answers)
+                .HasForeignKey(d => d.Questionid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("answer_questionid_fkey");
+        });
+
         modelBuilder.Entity<Poll>(entity =>
         {
             entity.HasKey(e => e.Pollid).HasName("poll_pkey");

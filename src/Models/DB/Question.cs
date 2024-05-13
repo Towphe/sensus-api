@@ -11,5 +11,7 @@ public partial class Question
 
     public string Question1 { get; set; } = null!;
 
+    public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();
+
     public virtual Poll? Poll { get; set; }
 }
